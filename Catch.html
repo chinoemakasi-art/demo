@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Catch Game</title>
+</head>
+<body style="margin:0; text-align:center; background:rgb(23, 229, 12); color:white;">
+
+    <h2>Catch the ball!</h2>
+    <p>Score: <span id="score">0</span> | lives: <span id="lives">4</span></p>
+
+    <canvas id="gamecanvas" width="400" height="500" style="background:#091be1;"></canvas>
+
+    <script>
+        let canvas = document.getElementById('gamecanvas');
+        let ctx = canvas.getContext('2d');
+
+        let playerX = 160;
+        let ballX = Math.random() * 360;
+        let ballY = 0;
+
+        let score = 0;
+        let lives = 4;
+
+        document.addEventListener('keydown', e => {
+            if(e.key === 'ArrowLeft') playerX -= 20;
+            if(e.key === 'ArrowRight') playerX += 20;
+
+            // Keep player within bounds
+            if(playerX < 0) playerX = 0;
+            if(playerX > 320) playerX = 320;
+        });
+        function gameloop(){
+            ctx.clearRect(0, 0, 400, 500);
+
+            // Draw player
+            ctx.fillStyle = 'green';
+            ctx.fillRect(playerX, 460, 80, 20);
+
+            // Draw ball
+            ctx.beginPath();
+            ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+            
+
+            // Move ball
+            ballY += 4;
+
+            // Check for catch
+            if(ballY > 450 && ballX > playerX && ballX < playerX + 80){
+                score++;
+                document.getElementById('score').innerText = score;
+                ballY = 0;
+                ballX = Math.random() * 380;
+            }
+
+            // Check for miss
+            if(ballY > 500){
+                lives--;
+                document.getElementById('lives').innerText = lives;
+                ballY = 0;
+                ballX = Math.random() * 380;
+
+                if(lives <= 0){
+                    alert("Game Over! Your score: " + score);
+                    location.reload();
+                }
+            }
+
+            requestAnimationFrame(gameloop);
+        }
+        gameloop();
+    </script>
+
+</body>
+</html>
